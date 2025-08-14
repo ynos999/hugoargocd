@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: hugo
-        image: ynos999/hugo-dezool
+        image: ynos999/hugo-dezool:0.1
         ports:
         - containerPort: 80
