@@ -13,6 +13,8 @@ spec:
       labels:
         app: hugo
     spec:
+      # imagePullSecrets:
+      #   - name: dockerhub-secret # Use this if you need to pull images from a private Docker registry
       containers:
       - name: hugo
         image: ynos999/hugo-dezool:0.1

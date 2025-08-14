@@ -42,3 +42,17 @@
 ### --- Add to host file Domain Name ---
 ### sudo nano /etc/hosts
 ### your_server_IP  dezool.db.local
+
+## If You use Dockerhub tocken
+### kubectl create secret docker-registry dockerhub-secret \
+###  --docker-username=user \
+###  --docker-password=DOCKER_HUB_PASSWORD_OR_TOKEN \
+###  --docker-email=you@example.com
+
+#### kubectl get secrets
+#### kubectl get secrets -n default
+#### kubectl describe secret dockerhub-secret
+#### kubectl get secret dockerhub-secret -o yaml
+
+## If You use GitHub private repo, create tocken and save in ArgoCD.
+### https://github.com/settings/apps
