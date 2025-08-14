@@ -3,7 +3,7 @@ name: Deploy to K3s via SSH
 on:
   push:
     branches:
-      - main  # Vai cita jūsu noklusējuma atzara nosaukums
+      - main
 
 jobs:
   deploy:
@@ -24,7 +24,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.TEST_SERVER_USER }}@${{ secrets.K3STEST_SERVER_IP }} "echo SSH OK"
           
           # Kopēt YAML failus no hugo mapes uz serveri
-          scp -o StrictHostKeyChecking=no hugo/deployment.yaml hugo/ingress.yaml hugo/service.yaml hugo/autoscale.yaml ${{ secrets.TEST_SERVER_USER }}@${{ secrets.K3STEST_SERVER_IP }}:/tmp/
+          scp -o StrictHostKeyChecking=no hugo/deployment.yaml hugo/ingress.yaml hugo/service.yaml hugo/autoscaling.yaml ${{ secrets.TEST_SERVER_USER }}@${{ secrets.K3STEST_SERVER_IP }}:/tmp/
           
           # Palaist komandas uz attālā servera
           ssh -o StrictHostKeyChecking=no ${{ secrets.TEST_SERVER_USER }}@${{ secrets.K3STEST_SERVER_IP }} <<EOF
@@ -32,13 +32,13 @@ jobs:
             kubectl get -f /tmp/deployment.yaml -o yaml > /tmp/deployment-previous.yaml || true
             kubectl get -f /tmp/ingress.yaml -o yaml > /tmp/ingress-previous.yaml || true
             kubectl get -f /tmp/service.yaml -o yaml > /tmp/service-previous.yaml || true
-            kubectl get -f /tmp/autoscale.yaml -o yaml > /tmp/autoscale-previous.yaml || true
+            kubectl get -f /tmp/autoscaling.yaml -o yaml > /tmp/autoscaling-previous.yaml || true
 
             # Pielietot jauno konfigurāciju
             kubectl apply -f /tmp/deployment.yaml
             kubectl apply -f /tmp/ingress.yaml
             kubectl apply -f /tmp/service.yaml
-            kubectl apply -f /tmp/autoscale.yaml
+            kubectl apply -f /tmp/autoscaling.yaml
           EOF
           
       - name: Archive previous configuration for rollback
@@ -50,7 +50,7 @@ jobs:
             /tmp/deployment-previous.yaml
             /tmp/ingress-previous.yaml
             /tmp/service-previous.yaml
-            /tmp/autoscale-previous.yaml
+            /tmp/autoscaling-previous.yaml
 
   rollback:
     runs-on: ubuntu-latest
@@ -82,7 +82,7 @@ jobs:
             if [ -f /tmp/service-previous.yaml ]; then
               kubectl apply -f /tmp/service-previous.yaml
             fi
-            if [ -f /tmp/autoscale-previous.yaml ]; then
-              kubectl apply -f /tmp/autoscale-previous.yaml
+            if [ -f /tmp/autoscaling-previous.yaml ]; then
+              kubectl apply -f /tmp/autoscaling-previous.yaml
             fi
           EOF
