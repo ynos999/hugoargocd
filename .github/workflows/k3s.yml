@@ -86,6 +86,3 @@ jobs:
               kubectl apply -f /tmp/autoscale-previous.yaml
             fi
           EOF
-
-
-#Tests
