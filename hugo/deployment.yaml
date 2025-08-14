@@ -17,4 +17,4 @@ spec:
       - name: hugo
         image: ynos999/hugo-dezool:0.1
         ports:
-        - containerPort: 80
+        - containerPort: 1313  # jāatbilst EXPOSE no Dockerfile
