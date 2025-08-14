@@ -11,7 +11,7 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -23,10 +23,10 @@ jobs:
           # Pārbaudīt, vai SSH savienojums darbojas
           ssh -o StrictHostKeyChecking=no ${{ secrets.TEST_SERVER_USER }}@${{ secrets.K3STEST_SERVER_IP }} "echo SSH OK"
           
-          # Kopēt YAML failus uz serveri
+          # Kopēt YAML failus no hugo mapes uz serveri
           scp -o StrictHostKeyChecking=no hugo/deployment.yaml hugo/ingress.yaml hugo/service.yaml hugo/autoscale.yaml ${{ secrets.TEST_SERVER_USER }}@${{ secrets.K3STEST_SERVER_IP }}:/tmp/
-
-          # Palaizt komandas uz attālā servera
+          
+          # Palaist komandas uz attālā servera
           ssh -o StrictHostKeyChecking=no ${{ secrets.TEST_SERVER_USER }}@${{ secrets.K3STEST_SERVER_IP }} <<EOF
             # Konfigurācijas dublēšana pirms jaunas pielietošanas
             kubectl get -f /tmp/deployment.yaml -o yaml > /tmp/deployment-previous.yaml || true
@@ -43,7 +43,7 @@ jobs:
           
       - name: Archive previous configuration for rollback
         if: success()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: previous-config
           path: |
@@ -61,17 +61,17 @@ jobs:
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.TEST_SERVER_SSH_PRIVATE_KEY }}
 
       - name: Download previous configuration
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: previous-config
           path: .
           
       - name: Rollback deployment
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF
+          ssh -o StrictHostKeyChecking=no ${{ secrets.TEST_SERVER_USER }}@${{ secrets.K3STEST_SERVER_IP }} <<EOF
             # Pielietot atgriezenisko konfigurāciju, ja tā pastāv
             if [ -f /tmp/deployment-previous.yaml ]; then
               kubectl apply -f /tmp/deployment-previous.yaml
