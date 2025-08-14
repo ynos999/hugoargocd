@@ -3,7 +3,7 @@ name: Deploy to K3s via SSH
 on:
   push:
     branches:
-      - main
+      - main  # Vai cita jūsu noklusējuma atzara nosaukums
 
 jobs:
   deploy:
@@ -29,16 +29,16 @@ jobs:
           # Palaist komandas uz attālā servera
           ssh -o StrictHostKeyChecking=no ${{ secrets.TEST_SERVER_USER }}@${{ secrets.K3STEST_SERVER_IP }} <<EOF
             # Konfigurācijas dublēšana pirms jaunas pielietošanas
-            kubectl get -f /tmp/deployment.yaml -o yaml > /tmp/deployment-previous.yaml || true
-            kubectl get -f /tmp/ingress.yaml -o yaml > /tmp/ingress-previous.yaml || true
-            kubectl get -f /tmp/service.yaml -o yaml > /tmp/service-previous.yaml || true
-            kubectl get -f /tmp/autoscaling.yaml -o yaml > /tmp/autoscaling-previous.yaml || true
+            sudo kubectl get -f /tmp/deployment.yaml -o yaml > /tmp/deployment-previous.yaml || true
+            sudo kubectl get -f /tmp/ingress.yaml -o yaml > /tmp/ingress-previous.yaml || true
+            sudo kubectl get -f /tmp/service.yaml -o yaml > /tmp/service-previous.yaml || true
+            sudo kubectl get -f /tmp/autoscaling.yaml -o yaml > /tmp/autoscaling-previous.yaml || true
 
             # Pielietot jauno konfigurāciju
-            kubectl apply -f /tmp/deployment.yaml
-            kubectl apply -f /tmp/ingress.yaml
-            kubectl apply -f /tmp/service.yaml
-            kubectl apply -f /tmp/autoscaling.yaml
+            sudo kubectl apply -f /tmp/deployment.yaml
+            sudo kubectl apply -f /tmp/ingress.yaml
+            sudo kubectl apply -f /tmp/service.yaml
+            sudo kubectl apply -f /tmp/autoscaling.yaml
           EOF
           
       - name: Archive previous configuration for rollback
@@ -74,15 +74,15 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.TEST_SERVER_USER }}@${{ secrets.K3STEST_SERVER_IP }} <<EOF
             # Pielietot atgriezenisko konfigurāciju, ja tā pastāv
             if [ -f /tmp/deployment-previous.yaml ]; then
-              kubectl apply -f /tmp/deployment-previous.yaml
+              sudo kubectl apply -f /tmp/deployment-previous.yaml
             fi
             if [ -f /tmp/ingress-previous.yaml ]; then
-              kubectl apply -f /tmp/ingress-previous.yaml
+              sudo kubectl apply -f /tmp/ingress-previous.yaml
             fi
             if [ -f /tmp/service-previous.yaml ]; then
-              kubectl apply -f /tmp/service-previous.yaml
+              sudo kubectl apply -f /tmp/service-previous.yaml
             fi
             if [ -f /tmp/autoscaling-previous.yaml ]; then
-              kubectl apply -f /tmp/autoscaling-previous.yaml
+              sudo kubectl apply -f /tmp/autoscaling-previous.yaml
             fi
           EOF
