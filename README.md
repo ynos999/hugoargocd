@@ -56,3 +56,8 @@
 
 ## If You use GitHub private repo, create tocken and save in ArgoCD.
 ### https://github.com/settings/apps
+
+#### sudo kubectl get pods
+#### sudo kubectl get svc
+#### sudo kubectl get ingress
+#### sudo kubectl logs <poda-nosaukums>
