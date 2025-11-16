@@ -17,6 +17,6 @@ spec:
       #   - name: dockerhub-secret # Use this if you need to pull images from a private Docker registry
       containers:
       - name: hugo
-        image: ynos999/hugo-dezool:0.1
+        image: ynos999/hugo-dezool:latest
         ports:
         - containerPort: 1313  # jāatbilst EXPOSE no Dockerfile
