@@ -61,3 +61,5 @@
 #### sudo kubectl get svc
 #### sudo kubectl get ingress
 #### sudo kubectl logs <poda-nosaukums>
+#### sudo kubectl get pvc
+#### sudo kubectl describe pvc hugo-pvc
