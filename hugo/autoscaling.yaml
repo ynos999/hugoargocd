@@ -7,18 +7,18 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: hugo
-  minReplicas: 2
-  maxReplicas: 3
+  minReplicas: 3
+  maxReplicas: 5
   metrics:
   - type: Resource
     resource:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 70
+        averageUtilization: 70  # Ja vidējais CPU lietojums pārsniedz 70%, mēģinās palielināt podu skaitu.
   - type: Resource
     resource:
       name: memory
       target:
         type: Utilization
-        averageUtilization: 80
+        averageUtilization: 80  # Ja vidējais RAM lietojums pārsniedz 80%, mēģinās palielināt podu skaitu.

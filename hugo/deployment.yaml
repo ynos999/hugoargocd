@@ -5,6 +5,12 @@ metadata:
   labels:
     app: hugo
 spec:
+  replicas: 3  # Repliku skaits
+  strategy:
+    type: RollingUpdate  # Kubernetes atjauno podus pakāpeniski, nevis visus uzreiz. RollingUpdate saglabā servisu pieejamu.
+    rollingUpdate:
+      maxUnavailable: 1  # MaxUnavailable/MaxSurge nosaka, cik podi var tikt aizvietoti vienlaikus.
+      maxSurge: 1
   selector:
     matchLabels:
       app: hugo
@@ -14,9 +20,22 @@ spec:
         app: hugo
     spec:
       # imagePullSecrets:
-      #   - name: dockerhub-secret # Use this if you need to pull images from a private Docker registry
+      #   - name: dockerhub-secret # Izmanto, ja ir nepieciešams izgūt image no privāta Docker reģistra.
+      # Readiness/Liveness probes nodrošina, ka podi ir “veseli”.
       containers:
       - name: hugo
         image: ynos999/hugo-dezool:latest
         ports:
-        - containerPort: 1313  # jāatbilst EXPOSE no Dockerfile
+        - containerPort: 1313  # Jāatbilst EXPOSE no Dockerfile
+        readinessProbe:  # Readiness probe – neļauj sūtīt trafiku uz podu, kamēr tas nav gatavs.
+          httpGet:
+            path: /
+            port: 1313
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:  # Liveness probe – automātiski restartē podu, ja tas uzkaras.
+          httpGet:
+            path: /
+            port: 1313
+          initialDelaySeconds: 10
+          periodSeconds: 10
